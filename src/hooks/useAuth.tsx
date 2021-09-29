@@ -86,11 +86,20 @@ function AuthProvider({ children }: AuthProviderData) {
 
   async function signOut() {
     try {
-      
+      setIsLoggingOut(true);
+
+      await revokeAsync(
+        { token: userToken, clientId: CLIENT_ID }, 
+        { revocationEndpoint: twitchEndpoints.revocation }
+      );
     } catch (error) {
-      throw new Error();
     } finally {
-      
+      setUser({} as User);
+      setUserToken('');
+
+      delete api.defaults.headers.authorization;
+
+      setIsLoggingOut(false);
     }
   }
 
